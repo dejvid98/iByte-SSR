@@ -41,6 +41,16 @@ const LaptopPage = () => {
     }
   }
 
+  const addToCart = (id: number) => {
+    const cartObj = {}
+    cartObj['cart'] = JSON.parse(window.localStorage.getItem('cart'))?.cart || []
+
+    if (!cartObj['cart'].includes(id)) {
+      cartObj['cart'] = [...cartObj['cart'], id]
+      window.localStorage.setItem('cart', JSON.stringify(cartObj))
+    }
+  }
+
   useEffect(() => {
     setIsLoading(true)
 
@@ -236,6 +246,7 @@ const LaptopPage = () => {
                     rating={item.rating * 1}
                     key={item._id}
                     id={item._id}
+                    addToCart={addToCart}
                   />
                 )
               })}

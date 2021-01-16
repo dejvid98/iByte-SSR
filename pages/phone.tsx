@@ -48,6 +48,16 @@ const phone = () => {
     512: 512,
   }
 
+  const addToCart = (id: number) => {
+    const cartObj = {}
+    cartObj['cart'] = JSON.parse(window.localStorage.getItem('cart'))?.cart || []
+
+    if (!cartObj['cart'].includes(id)) {
+      cartObj['cart'] = [...cartObj['cart'], id]
+      window.localStorage.setItem('cart', JSON.stringify(cartObj))
+    }
+  }
+
   interface Product {
     manufacturer: string
     model: string
@@ -252,6 +262,7 @@ const phone = () => {
                     rating={item.rating * 1}
                     key={item._id}
                     id={item._id}
+                    addToCart={addToCart}
                   />
                 )
               })}
