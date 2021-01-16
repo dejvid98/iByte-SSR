@@ -1,5 +1,5 @@
 module.exports = {
   env: {
-    SERVER: 'http://localhost:3005/api/',
+    SERVER: 'https://ibyte.gardenhouse.tech/api/',
   },
 }
