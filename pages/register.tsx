@@ -4,6 +4,7 @@ import Header from '../components/Layout/Header'
 import Footer from '../components/Layout/Footer'
 import { Input, Button } from 'antd'
 import Link from 'next/link'
+import Router from 'next/router'
 
 const register = () => {
   const [email, setEmail] = useState('')
@@ -15,14 +16,22 @@ const register = () => {
   const [phoneNumber, setPhoneNumber] = useState('')
 
   const handleRegister = async () => {
-    await axios.post(`${process.env.SERVER}auth/register`, {
+    const { data } = await axios.post(`${process.env.SERVER}auth/register`, {
       email,
       password,
       firstName,
+      username,
       lastName,
       address,
       phoneNumber,
     })
+
+    if (data.token) {
+      const jwtObj = {}
+      jwtObj['jwt'] = data.token
+      window.localStorage.setItem('jwt', JSON.stringify(jwtObj))
+      Router.push('/profile')
+    }
   }
   return (
     <div>
@@ -42,7 +51,7 @@ const register = () => {
               className='mb-4'
             />
             <Input
-              placeholder='Usernam'
+              placeholder='Username'
               value={username}
               onChange={(e) => setUsername(e.target.value)}
               className='mb-4'

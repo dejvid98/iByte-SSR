@@ -9,12 +9,18 @@ import Router from 'next/router'
 const register = () => {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [error, setError] = useState('')
 
   const handleLogin = async () => {
-    await axios.post(`${process.env.SERVER}auth/login`, {
-      email,
-      password,
-    })
+    const { data } = await axios.post(`${process.env.SERVER}auth/login`, { email, password })
+    if (data.token) {
+      const jwtObj = {}
+      jwtObj['jwt'] = data.token
+      window.localStorage.setItem('jwt', JSON.stringify(jwtObj))
+      Router.push('/profile')
+    } else {
+      setError('There was a problem with authentification.')
+    }
   }
 
   useEffect(() => {
@@ -42,6 +48,7 @@ const register = () => {
             <Link href='/register'>
               <p className='text-blue-500 cursor-pointer'>New to iByte? Join now </p>
             </Link>
+            {error && <p>{{ error }}</p>}
 
             <Button type='primary' size='large' onClick={handleLogin}>
               Login

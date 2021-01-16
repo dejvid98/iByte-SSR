@@ -4,9 +4,11 @@ import Header from '../components/Layout/Header'
 import Footer from '../components/Layout/Footer'
 import CartItem from '../components/CartItem'
 import { Button, Tooltip } from 'antd'
+import jwt from 'jsonwebtoken'
+import Router from 'next/router'
 
 const cart = () => {
-  const [cart, setCart] = useState(0)
+  const [cart, setCart] = useState<any>()
   const [data, setData] = useState([])
 
   const fetchCartFromStorage = () => {
@@ -17,7 +19,21 @@ const cart = () => {
       setData(resp.data)
     })
 
-    setCart(cartObj.cart.length)
+    setCart(cartObj.cart)
+  }
+
+  const handleOrder = async () => {
+    const userDataz = window.localStorage.getItem('jwt')
+    if (userDataz == null) {
+      return Router.push('/login')
+    }
+    const userDataObj = JSON.parse(userDataz)
+
+    jwt.verify(userDataObj.jwt, 'secretTokenz', async (_, decoded) => {
+      window.localStorage.removeItem('cart')
+      Router.push('/order/success')
+      await axios.post(`${process.env.SERVER}product/order`, { items: cart, userId: decoded.userInfo.id })
+    })
   }
 
   const removeFromCart = (id: number) => {
@@ -38,7 +54,7 @@ const cart = () => {
 
   return (
     <div>
-      <Header cart={cart} />
+      <Header cart={cart?.length} />
       <div className='product-page-wrapper min-h-full h-full'>
         <div className='search-wrapper flex justify-center items-center w-full'>
           <div className='review text-4xl not-italic mb-4 h-16 pb-2 w-full text-center mb-4'>
@@ -58,7 +74,7 @@ const cart = () => {
                 />
               ))}
               <div className='w-full flex justify-center mt-6'>
-                <Button type='primary' danger size='large'>
+                <Button type='primary' danger size='large' onClick={handleOrder}>
                   Place an order
                 </Button>
               </div>

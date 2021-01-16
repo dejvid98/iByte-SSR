@@ -5,7 +5,11 @@ import Link from 'next/link'
 import DropDownMenu from '../DropDownMenu'
 import Router from 'next/router'
 
-const Header = ({ cart }) => {
+interface Props {
+  cart?: any
+}
+
+const Header = ({ cart }: Props) => {
   const { Search } = Input
   const [cartState, setCartState] = useState(0)
 
